@@ -1,0 +1,23 @@
+version: "3"
+services:
+  pg:
+    build:
+      context: pg
+    ports:
+      - "5432:5432"
+
+  shared-server:
+    build:
+      context: .
+      args:
+        HTTP_PROXY: "$HTTP_PROXY"
+        HTTPS_PROXY: "$HTTPS_PROXY"
+    image: ss
+    environment:
+      - PROD=$PROD
+      - PORT=$PORT
+      - DATABASE_URL=$DATABASE_URL
+    ports:
+      - "3000:$PORT"
+    depends_on:
+      - pg
