@@ -17,6 +17,7 @@ services:
       - PROD=$PROD
       - PORT=$PORT
       - DATABASE_URL=$DATABASE_URL
+      - LOG_LEVEL=$LOG_LEVEL
     ports:
       - "3000:$PORT"
     depends_on:
