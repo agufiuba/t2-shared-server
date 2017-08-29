@@ -6,7 +6,7 @@ WORKDIR /ss
 RUN apt-get update && apt-get install postgresql-client -y
 
 ADD package.json /ss/package.json
-RUN npm config set registry "http://registry.npmjs.org/" && npm i
+RUN npm config set registry "http://registry.npmjs.org/" && npm i && npm i --save-dev mocha
 
 ADD src /ss/src
 
