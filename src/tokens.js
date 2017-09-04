@@ -5,7 +5,7 @@ var tokens = {};
 
 module.exports = {
   add: (id) => {
-    tokens[id] = jwt.sign({id: id}, 'secret');
+    tokens[id] = jwt.sign({id: id}, secret);
   },
   remove: (id) => {
     delete tokens[id];
