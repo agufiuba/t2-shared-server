@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha src/test",
     "start": "node src/index.js",
-    "coverage": "nyc --reporter=text-lcov mocha src/test"
+    "coverage": "nyc --reporter=text-lcov mocha src/test | coveralls"
   },
   "author": "",
   "license": "ISC",
