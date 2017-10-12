@@ -1,5 +1,9 @@
 language: node_js
+install:
+  npm install nyc mocha coveralls -g
 node_js:
   - "4.8.0"
 script:
   - npm test
+after_success:
+  - npm run coverage
