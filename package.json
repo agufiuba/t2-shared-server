@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.4",
+    "express-promise-router": "^2.0.0",
     "jsonwebtoken": "^7.4.3",
     "pg": "^7.1.2",
     "winston": "^2.3.1"
