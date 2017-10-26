@@ -20,6 +20,6 @@ services:
       - LOG_LEVEL=$LOG_LEVEL
       - TOKEN_SECRET=$TOKEN_SECRET
     ports:
-      - "3000:$PORT"
+      - "$PORT:3000"
     depends_on:
       - pg
