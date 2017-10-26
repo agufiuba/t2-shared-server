@@ -23,3 +23,8 @@ services:
       - "$PORT:3000"
     depends_on:
       - pg
+
+networks:
+  default:
+    external:
+      name: ubernet
