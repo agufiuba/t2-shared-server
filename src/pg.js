@@ -18,8 +18,11 @@ module.exports = {
   getUsers: () => {
     return pool.query("SELECT * FROM usuarios;");
   },
-  getUser: id => {
+  getUserById: id => {
     return pool.query("SELECT * FROM usuarios WHERE id=$1;", [id]);
+  },
+  getUserByMail: mail => {
+    return pool.query("SELECT * FROM usuarios WHERE correo=$1;", [mail]);
   },
   updateUser: usuario => {
     return pool.query(
