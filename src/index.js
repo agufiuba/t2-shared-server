@@ -33,9 +33,10 @@ router.get("/logged/:id", function(req, res) {
 
 router.post("/users", async function(req, res) {
   var usuario = {
-    nombre: req.query.nombre,
-    apellido: req.query.apellido,
-    correo: req.query.correo
+    nombre: req.query.name,
+    apellido: req.query.last_name,
+    correo: req.query.mail,
+    tipo: req.query.type
   };
 
   await pg.createUser(usuario);
@@ -66,9 +67,10 @@ router.put("/users/:id", async function(req, res) {
   } else {
     var usuario = {
       id: req.params.id,
-      nombre: req.query.nombre,
-      apellido: req.query.apellido,
-      correo: req.query.correo
+      nombre: req.query.name,
+      apellido: req.query.last_name,
+      correo: req.query.mail,
+      tipo: req.query.type
     };
     await pg.updateUser(usuario);
     res.send();

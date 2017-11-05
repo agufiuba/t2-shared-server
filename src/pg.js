@@ -11,8 +11,8 @@ if (process.env.PROD == "true") {
 module.exports = {
   createUser: usuario => {
     return pool.query(
-      "INSERT INTO usuarios(nombre, apellido, correo) VALUES($1, $2, $3);",
-      [usuario.nombre, usuario.apellido, usuario.correo]
+      "INSERT INTO usuarios(nombre, apellido, correo, tipo) VALUES($1, $2, $3, $4);",
+      [usuario.nombre, usuario.apellido, usuario.correo, usuario.tipo]
     );
   },
   getUsers: () => {
@@ -23,8 +23,8 @@ module.exports = {
   },
   updateUser: usuario => {
     return pool.query(
-      "UPDATE usuarios SET nombre=$1, apellido=$2, correo=$3 WHERE id=$4;",
-      [usuario.nombre, usuario.apellido, usuario.correo, usuario.id]
+      "UPDATE usuarios SET nombre=$1, apellido=$2, correo=$3, tipo=$4 WHERE id=$5;",
+      [usuario.nombre, usuario.apellido, usuario.correo, usuario.tipo, usuario.id]
     );
   },
   removeUser: id => {
