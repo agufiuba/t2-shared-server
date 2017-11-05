@@ -23,10 +23,10 @@ SET default_with_oids = false;
 
 CREATE TABLE usuarios (
     id integer NOT NULL,
-    nombre text NOT NULL,
-    apellido text NOT NULL,
-    correo text NOT NULL,
-    tipo integer NOT NULL
+    name text NOT NULL,
+    last_name text NOT NULL,
+    mail text NOT NULL,
+    type integer NOT NULL
 );
 
 
