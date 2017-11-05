@@ -50,7 +50,11 @@ router.get("/users", async function(req, res) {
 });
 
 router.get("/users/:id", async function(req, res) {
-  const { rows } = await pg.getUser(req.params.id);
+  if (isNaN(req.params.id))
+    var func = pg.getUserByMail
+  else
+    var func = pg.getUserById
+  const { rows } = await func(req.params.id);
   if (rows.length == 0) {
     res.status(404);
     res.send();
