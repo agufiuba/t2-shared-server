@@ -25,7 +25,8 @@ CREATE TABLE usuarios (
     id integer NOT NULL,
     nombre text NOT NULL,
     apellido text NOT NULL,
-    correo text NOT NULL
+    correo text NOT NULL,
+    tipo integer NOT NULL
 );
 
 
@@ -56,7 +57,7 @@ ALTER SEQUENCE usuarios_id_seq OWNED BY usuarios.id;
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 5, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 9, true);
 
 
 --
@@ -70,12 +71,10 @@ ALTER TABLE ONLY usuarios ALTER COLUMN id SET DEFAULT nextval('usuarios_id_seq':
 -- Data for Name: usuarios; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY usuarios (id, nombre, apellido, correo) FROM stdin;
-1	Agustin	Gaillard	agufiuba@gmail.com
-2	Tomas	Arjovsky	tarjovsky@gmail.com
-3	Dario	Maitia	darius@gmail.com
-4	Cristian	Gonzalez	cristian@gmail.com
-\.
+INSERT INTO usuarios VALUES (1, 'Agustin', 'Gaillard', 'agu@gmail.com', 1);
+INSERT INTO usuarios VALUES (2, 'Tomas', 'Arjovsky', 'tomas@gmail.com', 1);
+INSERT INTO usuarios VALUES (3, 'Cristian', 'Gonzalez', 'cristian@gmail.com', 2);
+INSERT INTO usuarios VALUES (4, 'Darius', 'Maitita', 'darius@gmail.com', 2);
 
 
 --
@@ -87,16 +86,5 @@ ALTER TABLE ONLY usuarios
 
 
 --
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
---
 -- PostgreSQL database dump complete
 --
-
