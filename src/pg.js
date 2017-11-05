@@ -9,10 +9,10 @@ if (process.env.PROD == "true") {
 }
 
 module.exports = {
-  createUser: usuario => {
+  createUser: user => {
     return pool.query(
-      "INSERT INTO usuarios(nombre, apellido, correo, tipo) VALUES($1, $2, $3, $4);",
-      [usuario.nombre, usuario.apellido, usuario.correo, usuario.tipo]
+      "INSERT INTO usuarios(name, last_name, mail, type) VALUES($1, $2, $3, $4);",
+      [user.name, user.last_name, user.mail, user.type]
     );
   },
   getUsers: () => {
@@ -22,12 +22,12 @@ module.exports = {
     return pool.query("SELECT * FROM usuarios WHERE id=$1;", [id]);
   },
   getUserByMail: mail => {
-    return pool.query("SELECT * FROM usuarios WHERE correo=$1;", [mail]);
+    return pool.query("SELECT * FROM usuarios WHERE mail=$1;", [mail]);
   },
-  updateUser: usuario => {
+  updateUser: user => {
     return pool.query(
-      "UPDATE usuarios SET nombre=$1, apellido=$2, correo=$3, tipo=$4 WHERE id=$5;",
-      [usuario.nombre, usuario.apellido, usuario.correo, usuario.tipo, usuario.id]
+      "UPDATE usuarios SET name=$1, last_name=$2, mail=$3, type=$4 WHERE id=$5;",
+      [user.name, user.last_name, user.mail, user.type, user.id]
     );
   },
   removeUser: id => {
