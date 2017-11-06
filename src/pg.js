@@ -1,3 +1,5 @@
+var date = new Date();
+
 var pg = require("pg");
 
 var pool = new pg.Pool({
@@ -18,19 +20,85 @@ module.exports = {
   getUsers: () => {
     return pool.query("SELECT * FROM usuarios;");
   },
-  getUserById: id => {
-    return pool.query("SELECT * FROM usuarios WHERE id=$1;", [id]);
-  },
-  getUserByMail: mail => {
-    return pool.query("SELECT * FROM usuarios WHERE mail=$1;", [mail]);
+  getUser: id => {
+    var correo = id.toString();
+    if (isNaN(id)) id = 0;
+    return pool.query("SELECT * FROM usuarios WHERE id=$1 OR correo=$2;", [
+      id,
+      correo
+    ]);
   },
   updateUser: user => {
     return pool.query(
-      "UPDATE usuarios SET name=$1, last_name=$2, mail=$3, type=$4 WHERE id=$5;",
-      [user.name, user.last_name, user.mail, user.type, user.id]
+      "UPDATE usuarios SET nombre=$1, apellido=$2, correo=$3, tipo=$4 WHERE id=$5;",
+      [
+        usuario.nombre,
+        usuario.apellido,
+        usuario.correo,
+        usuario.tipo,
+        usuario.id
+      ]
     );
   },
   removeUser: id => {
     return pool.query("DELETE FROM usuarios WHERE id=$1;", [id]);
+  },
+  getConductor: id => {
+    var correo = id.toString();
+    if (isNaN(id)) id = 0;
+    return pool.query(
+      "SELECT * FROM usuarios WHERE (id=$1 OR correo=$2) AND type=2;",
+      [id, correo]
+    );
+  },
+  getSaldo: id => {
+    var correo = id.toString();
+    if (isNaN(id)) id = 0;
+    return pool.query("SELECT saldo FROM usuarios WHERE id=$1 OR correo=$2;", [
+      id,
+      correo
+    ]);
+  },
+  updateSaldo: (id, saldo) => {
+    var correo = id.toString();
+    if (isNaN(id)) id = 0;
+    return pool.query(
+      "UPDATE usuarios SET saldo=$1 WHERE id=$2 OR correo=$3;",
+      [saldo, id, correo]
+    );
+  },
+  createTrip: () => {},
+  getCantViajesP: id => {
+    return pool.query("SELECT COUNT(1) FROM viajes WHERE pasajero=$1", [id]);
+  },
+  getCantViajesDiaP: id => {
+    var m = date.getUTCMonth() + 1;
+    var d = date.getUTCDate();
+    var y = date.getUTCFullYear();
+    var dia = d + "/" + m + "/" + y;
+    return pool.query(
+      "SELECT COUNT(1) FROM viajes WHERE pasajero=$1 AND dia=$2",
+      [id, dia]
+    );
+  },
+  getCantViajesHHP: id => {
+    var hh = date.getTime() - 1800000;
+    return pool.query(
+      "SELECT COUNT(1) FROM viajes WHERE pasajero=$1 AND hora>=$2",
+      [id, hh]
+    );
+  },
+  getCantViajesDiaC: id => {
+    var m = date.getUTCMonth() + 1;
+    var d = date.getUTCDate();
+    var y = date.getUTCFullYear();
+    var dia = d + "/" + m + "/" + y;
+    return pool.query(
+      "SELECT COUNT(1) FROM viajes WHERE conductor=$1 AND dia=$2",
+      [id, dia]
+    );
+  },
+  getMailFromId: id => {
+    return pool.query("SELECT correo FROM usuarios WHERE id=$1", [id]);
   }
 };
