@@ -2,6 +2,7 @@ var express = require("express");
 var cors = require("cors");
 var pg = require("./pg");
 var tokens = require("./tokens");
+var costos = require("./costos");
 var router = require("express-promise-router")();
 var app = express();
 
@@ -50,9 +51,7 @@ router.get("/users", async function(req, res) {
 });
 
 router.get("/users/:id", async function(req, res) {
-  if (isNaN(req.params.id)) var func = pg.getUserByMail;
-  else var func = pg.getUserById;
-  const { rows } = await func(req.params.id);
+  const { rows } = await pg.getUser(req.params.id);
   if (rows.length == 0) {
     res.status(404);
     res.send();
@@ -87,6 +86,45 @@ router.delete("/users/:id", async function(req, res) {
   } else {
     await pg.removeUser(req.params.id);
     res.send();
+  }
+});
+
+router.post("/trip/:p/:c/:d", async function(req, res) {
+  var found = true;
+  var err = {};
+  const { pasajero } = await pg.getUser(req.params.p);
+  if (rows.length == 0) {
+    found = false;
+    err.pasajero = 404;
+    res.status(404);
+  }
+  const { conductor } = await pg.getConductor(req.params.c);
+  if (rows.length == 0) {
+    found = false;
+    err.conductor = 404;
+    res.status(404);
+  }
+  if (!found) {
+    res.send(err);
+  } else {
+    // await pg.createTrip(req.params.p, req.params.c, req.params.d);
+    const { saldoP } = await pg.getSaldo(req.params.p);
+    if (saldoP < 0) {
+      res.status(409);
+      res.send();
+    } else {
+      const { saldoC } = await pg.getSaldo(req.params.c);
+      await pg.updateSaldo(
+        req.params.p,
+        saldoP - costos.pasajero(req.params.p, req.params.d)
+      );
+      await pg.updateSaldo(
+        req.params.c,
+        saldoC + costos.conductor(req.params.c, req.params.d)
+      );
+      res.status(201);
+      res.send();
+    }
   }
 });
 
