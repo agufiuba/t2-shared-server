@@ -1,8 +1,8 @@
 var express = require("express");
+var cors = require("cors");
 var pg = require("./pg");
 var tokens = require("./tokens");
 var router = require("express-promise-router")();
-
 var app = express();
 
 router.get("/hw", function(req, res) {
@@ -50,10 +50,8 @@ router.get("/users", async function(req, res) {
 });
 
 router.get("/users/:id", async function(req, res) {
-  if (isNaN(req.params.id))
-    var func = pg.getUserByMail
-  else
-    var func = pg.getUserById
+  if (isNaN(req.params.id)) var func = pg.getUserByMail;
+  else var func = pg.getUserById;
   const { rows } = await func(req.params.id);
   if (rows.length == 0) {
     res.status(404);
@@ -92,5 +90,6 @@ router.delete("/users/:id", async function(req, res) {
   }
 });
 
+app.use(cors());
 app.use(router);
 app.listen(process.env.PORT, function() {});
