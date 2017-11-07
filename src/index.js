@@ -114,19 +114,32 @@ router.post("/trips/:p/:c/:d", async function(req, res) {
       res.send();
     } else {
       const { saldoC } = await pg.getSaldo(req.params.c);
+      const { costoP } = await costos.pasajero(req.params.p, req.params.d);
+      const { costoC } = await costos.conductor(req.params.c, req.params.d);
       await pg.updateSaldo(
         req.params.p,
-        saldoP - costos.pasajero(req.params.p, req.params.d)
+        saldoP - costoP[0]
       );
       await pg.updateSaldo(
         req.params.c,
-        saldoC + costos.conductor(req.params.c, req.params.d)
+        saldoC + costoC[0]
       );
       res.status(201);
       res.send();
     }
   }
 });
+
+router.get("/costos/:p/:d", async function(req, res) {
+  const { pasajero } = await pg.getUser(req.params.p);
+  if (pasajero.length == 0) {
+    res.status(404);
+    res.send();
+  } else {
+    const { costoP } = await costos.pasajero(req.params.p, req.params.d);
+    res.send(costP[0]);
+  }
+})
 
 app.use(cors());
 app.use(router);
