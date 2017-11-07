@@ -23,19 +23,19 @@ module.exports = {
   getUser: id => {
     var correo = id.toString();
     if (isNaN(id)) id = 0;
-    return pool.query("SELECT * FROM usuarios WHERE id=$1 OR correo=$2;", [
+    return pool.query("SELECT * FROM usuarios WHERE id=$1 OR mail=$2;", [
       id,
       correo
     ]);
   },
   updateUser: user => {
     return pool.query(
-      "UPDATE usuarios SET nombre=$1, apellido=$2, correo=$3, tipo=$4 WHERE id=$5;",
+      "UPDATE usuarios SET name=$1, last_name=$2, mail=$3, type=$4 WHERE id=$5;",
       [
-        usuario.nombre,
-        usuario.apellido,
-        usuario.correo,
-        usuario.tipo,
+        usuario.name,
+        usuario.last_name,
+        usuario.mail,
+        usuario.type,
         usuario.id
       ]
     );
@@ -47,24 +47,24 @@ module.exports = {
     var correo = id.toString();
     if (isNaN(id)) id = 0;
     return pool.query(
-      "SELECT * FROM usuarios WHERE (id=$1 OR correo=$2) AND type=2;",
-      [id, correo]
+      "SELECT * FROM usuarios WHERE (id=$1 OR mail=$2) AND type=2;",
+      [id, mail]
     );
   },
   getSaldo: id => {
     var correo = id.toString();
     if (isNaN(id)) id = 0;
-    return pool.query("SELECT saldo FROM usuarios WHERE id=$1 OR correo=$2;", [
+    return pool.query("SELECT saldo FROM usuarios WHERE id=$1 OR mail=$2;", [
       id,
-      correo
+      mail
     ]);
   },
   updateSaldo: (id, saldo) => {
     var correo = id.toString();
     if (isNaN(id)) id = 0;
     return pool.query(
-      "UPDATE usuarios SET saldo=$1 WHERE id=$2 OR correo=$3;",
-      [saldo, id, correo]
+      "UPDATE usuarios SET saldo=$1 WHERE id=$2 OR mail=$3;",
+      [saldo, id, mail]
     );
   },
   createTrip: () => {},
@@ -99,6 +99,6 @@ module.exports = {
     );
   },
   getMailFromId: id => {
-    return pool.query("SELECT correo FROM usuarios WHERE id=$1", [id]);
+    return pool.query("SELECT mail FROM usuarios WHERE id=$1", [id]);
   }
 };
