@@ -89,17 +89,17 @@ router.delete("/users/:id", async function(req, res) {
   }
 });
 
-router.post("/trip/:p/:c/:d", async function(req, res) {
+router.post("/trips/:p/:c/:d", async function(req, res) {
   var found = true;
   var err = {};
   const { pasajero } = await pg.getUser(req.params.p);
-  if (rows.length == 0) {
+  if (pasajero.length == 0) {
     found = false;
     err.pasajero = 404;
     res.status(404);
   }
   const { conductor } = await pg.getConductor(req.params.c);
-  if (rows.length == 0) {
+  if (conductor.length == 0) {
     found = false;
     err.conductor = 404;
     res.status(404);
