@@ -11,10 +11,10 @@ var cPPK = 5;
 module.exports = {
   pasajero: async (id, kms) => {
     var precio = 0;
-    const { rowsSaldo } = await pg.getSaldo(id);
-    const { rowsCorreo } = await pg.getMailFromId(id);
-    if (!rowsCorreo[0].endsWith("@llevame.com")) {
-      if (rowsSaldo[0] >= 0) {
+    const saldo = await pg.getSaldo(id);
+    const correo = await pg.getMailFromId(id);
+    if (!correo.rows[0].mail.endsWith("@llevame.com")) {
+      if (saldo.rows[0].saldo >= 0) {
         precio = pMinimo + kms * pPPK;
         var off = 0;
         var recargo = 0;
@@ -37,18 +37,18 @@ module.exports = {
           }
         }
         // Primer viaje
-        const { rowsCantViajes } = await pg.getCantViajesP(id);
-        if (rowsCantViajes[0] == 0) {
+        const cantViajes = await pg.getCantViajesP(id);
+        if (cantViajes.rows[0].count == 0) {
           precio -= 100;
         }
         // Mas de 10 viajes en 30 min
-        const { rowsCantViajesHH } = await pg.getCantViajesHHP(id);
-        if (rowsCantViajesHH[0] > 10) {
+        const cantViajesHH = await pg.getCantViajesHHP(id);
+        if (cantViajesHH.rows[0].count > 10) {
           recargo += 0.15;
         }
         // 5to viaje del dia
-        const { rowsCantViajesDia } = await pg.getCantViajesDiaP(id);
-        if (rowsCantViajesDia[0] >= 5) {
+        const cantViajesDia = await pg.getCantViajesDiaP(id);
+        if (cantViajesDia.rows[0].count >= 5) {
           off += 0.05;
         }
         precio += precio * recargo;
@@ -73,8 +73,8 @@ module.exports = {
       }
     }
     // Mas de 10 viajes en el dia
-    const { rowsCantViajesDia } = await pg.getCantViajesDiaC(id);
-    if (rowsCantViajesDia[0] >= 10) {
+    const cantViajesDia = await pg.getCantViajesDiaC(id);
+    if (cantViajesDia.rows[0].count >= 10) {
       recargo += 0.02;
     }
     return precio + precio * recargo;

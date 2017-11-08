@@ -92,14 +92,14 @@ router.delete("/users/:id", async function(req, res) {
 router.post("/trips/:p/:c/:d", async function(req, res) {
   var found = true;
   var err = {};
-  const { pasajero } = await pg.getUser(req.params.p);
-  if (pasajero.length == 0) {
+  const pasajero = await pg.getUser(req.params.p);
+  if (pasajero.rows.length == 0) {
     found = false;
     err.pasajero = 404;
     res.status(404);
   }
-  const { conductor } = await pg.getConductor(req.params.c);
-  if (conductor.length == 0) {
+  const conductor = await pg.getConductor(req.params.c);
+  if (conductor.rows.length == 0) {
     found = false;
     err.conductor = 404;
     res.status(404);
@@ -108,38 +108,60 @@ router.post("/trips/:p/:c/:d", async function(req, res) {
     res.send(err);
   } else {
     // await pg.createTrip(req.params.p, req.params.c, req.params.d);
-    const { saldoP } = await pg.getSaldo(req.params.p);
-    if (saldoP < 0) {
+    const saldoP = await pg.getSaldo(req.params.p);
+    const costoP = await costos.pasajero(req.params.p, req.params.d);
+    if (saldoP.rows[0].saldo < 0 || costoP > saldoP.rows[0].saldo) {
       res.status(409);
       res.send();
     } else {
-      const { saldoC } = await pg.getSaldo(req.params.c);
-      const { costoP } = await costos.pasajero(req.params.p, req.params.d);
-      const { costoC } = await costos.conductor(req.params.c, req.params.d);
+      const saldoC = await pg.getSaldo(req.params.c);
+      const costoC = await costos.conductor(req.params.c, req.params.d);
       await pg.updateSaldo(
         req.params.p,
-        saldoP - costoP[0]
+        parseFloat(saldoP.rows[0].saldo) - parseFloat(costoP)
       );
       await pg.updateSaldo(
         req.params.c,
-        saldoC + costoC[0]
+        parseFloat(saldoC.rows[0].saldo) + parseFloat(costoC)
       );
+      var date = new Date();
+      var trip = {
+        p: req.params.p,
+        c: req.params.c,
+        d: req.params.d,
+        costo: costoP,
+        ganancia: costoC,
+        dia: date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear(),
+        hora: date.getTime()
+      };
+      await pg.createTrip(trip);
       res.status(201);
       res.send();
     }
   }
 });
 
-router.get("/costos/:p/:d", async function(req, res) {
-  const { pasajero } = await pg.getUser(req.params.p);
-  if (pasajero.length == 0) {
+router.get("/trips/:id", async function(req, res) {
+  const user = await pg.getUser(req.params.id);
+  if (user.rows.length == 0) {
     res.status(404);
     res.send();
   } else {
-    const { costoP } = await costos.pasajero(req.params.p, req.params.d);
-    res.send(costP[0]);
+    const trips = await pg.getTrips(req.params.id, user.rows[0].type);
+    res.send(trips.rows);
   }
-})
+});
+
+router.get("/costos/:p/:d", async function(req, res) {
+  const pasajero = await pg.getUser(req.params.p);
+  if (pasajero.rows.length == 0) {
+    res.status(404);
+    res.send();
+  } else {
+    const costoP = await costos.pasajero(req.params.p, req.params.d);
+    res.send({costo: costoP});
+  }
+});
 
 app.use(cors());
 app.use(router);

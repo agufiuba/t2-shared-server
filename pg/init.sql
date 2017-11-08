@@ -100,7 +100,8 @@ CREATE TABLE usuarios (
     name text NOT NULL,
     last_name text NOT NULL,
     mail text NOT NULL,
-    type integer NOT NULL
+    type integer NOT NULL,
+    saldo numeric DEFAULT 0 NOT NULL
 );
 
 
@@ -159,6 +160,45 @@ CREATE TABLE usuarios_tarjetas (
 ALTER TABLE public.usuarios_tarjetas OWNER TO postgres;
 
 --
+-- Name: viajes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE viajes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.viajes_id_seq OWNER TO postgres;
+
+--
+-- Name: viajes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('viajes_id_seq', 2, true);
+
+
+--
+-- Name: viajes; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE viajes (
+    id integer DEFAULT nextval('viajes_id_seq'::regclass) NOT NULL,
+    pasajero integer NOT NULL,
+    conductor integer NOT NULL,
+    distancia integer NOT NULL,
+    costo numeric NOT NULL,
+    ganancia numeric NOT NULL,
+    dia text NOT NULL,
+    hora numeric NOT NULL
+);
+
+
+ALTER TABLE public.viajes OWNER TO postgres;
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -184,10 +224,10 @@ INSERT INTO tarjetas VALUES (1, 'DATC', '1594987623245126', 1);
 -- Data for Name: usuarios; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO usuarios VALUES (1, 'Agustin', 'Gaillard', 'agu@gmail.com', 1);
-INSERT INTO usuarios VALUES (2, 'Tomas', 'Arjovsky', 'tomas@gmail.com', 1);
-INSERT INTO usuarios VALUES (3, 'Cristian', 'Gonzalez', 'cristian@gmail.com', 2);
-INSERT INTO usuarios VALUES (4, 'Darius', 'Maitita', 'darius@gmail.com', 2);
+INSERT INTO usuarios VALUES (2, 'Tomas', 'Arjovsky', 'tomas@gmail.com', 1, 500.0);
+INSERT INTO usuarios VALUES (1, 'Agustin', 'Gaillard', 'agu@gmail.com', 1, 250.0);
+INSERT INTO usuarios VALUES (4, 'Darius', 'Maitita', 'darius@gmail.com', 2, 1000.0);
+INSERT INTO usuarios VALUES (3, 'Cristian', 'Gonzalez', 'cristian@gmail.com', 2, 375.0);
 
 
 --
@@ -205,6 +245,14 @@ INSERT INTO usuarios_autos VALUES (2, 2);
 INSERT INTO usuarios_tarjetas VALUES (3, 1);
 INSERT INTO usuarios_tarjetas VALUES (2, 1);
 INSERT INTO usuarios_tarjetas VALUES (1, 1);
+
+
+--
+-- Data for Name: viajes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO viajes VALUES (1, 1, 3, 13, 150, 75, '7/11/2017', 1510076940291);
+INSERT INTO viajes VALUES (2, 2, 4, 10, 200, 100, '7/11/2017', 1510077064409);
 
 
 --
@@ -264,6 +312,14 @@ ALTER TABLE ONLY usuarios
 
 
 --
+-- Name: viajes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY viajes
+    ADD CONSTRAINT viajes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: auto_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -293,6 +349,22 @@ ALTER TABLE ONLY usuarios_autos
 
 ALTER TABLE ONLY usuarios_tarjetas
     ADD CONSTRAINT usuario_fk FOREIGN KEY (usuario) REFERENCES usuarios(id) ON DELETE CASCADE;
+
+
+--
+-- Name: viajes_conductor_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY viajes
+    ADD CONSTRAINT viajes_conductor_fkey FOREIGN KEY (conductor) REFERENCES usuarios(id) ON DELETE CASCADE;
+
+
+--
+-- Name: viajes_pasajero_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY viajes
+    ADD CONSTRAINT viajes_pasajero_fkey FOREIGN KEY (pasajero) REFERENCES usuarios(id) ON DELETE CASCADE;
 
 
 --
