@@ -32,6 +32,7 @@ module.exports = {
         return res;
     },
     postPayment: async (p) => {
-        
+        const res = await api.post("payments", p);
+        return res.data;
     }
 }
