@@ -163,6 +163,13 @@ router.get("/costos/:p/:d", async function(req, res) {
   }
 });
 
+router.get("/paymethod", function(req, res) {
+  res.send([
+    { paymethod: "metodo1", parameters: [ { method: "parametro metodo"} ] },
+    { paymethod: "metodo2", parameters: [ { method: "otro parametro de otro metodo"} ] }
+  ])
+});
+
 app.use(cors());
 app.use(router);
 app.listen(process.env.PORT, function() {});
