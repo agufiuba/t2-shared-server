@@ -3,6 +3,7 @@ var cors = require("cors");
 var pg = require("./pg");
 var tokens = require("./tokens");
 var costos = require("./costos");
+var pagos = require("./pagos");
 var router = require("express-promise-router")();
 var app = express();
 
@@ -163,11 +164,9 @@ router.get("/costos/:p/:d", async function(req, res) {
   }
 });
 
-router.get("/paymethod", function(req, res) {
-  res.send([
-    { paymethod: "metodo1", parameters: [ { method: "parametro metodo"} ] },
-    { paymethod: "metodo2", parameters: [ { method: "otro parametro de otro metodo"} ] }
-  ])
+router.get("/paymethod", async function(req, res) {
+  const metodos = await pageXOffset.getPaymethods();
+  res.send(metodos);
 });
 
 app.use(cors());
