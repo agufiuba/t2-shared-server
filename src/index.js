@@ -165,7 +165,7 @@ router.get("/costos/:p/:d", async function(req, res) {
 });
 
 router.get("/paymethod", async function(req, res) {
-  const metodos = await pageXOffset.getPaymethods();
+  const metodos = await pagos.getPaymethods();
   res.send(metodos);
 });
 

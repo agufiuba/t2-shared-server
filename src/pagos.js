@@ -1,18 +1,19 @@
 var axios = require("axios");
 
 var token = (async function () {
-    await axios.get(
-        "shielded-escarpment-27661.herokuapp.com/api/v1/user/oauth/authorize", {
-            params: {
-                client_id: "ce69d9a7-226a-4b43-ae8b-50f6609c6738",
-                client_secret: "59a8011a-47a6-404e-8633-097256c981ca"
-            },
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }
-    );
-})().data.access_token;
+
+    var headers = {
+      "Content-Type": "application/json"
+    }
+    var data = {
+      client_id: "ce69d9a7-226a-4b43-ae8b-50f6609c6738",
+      client_secret: "59a8011a-47a6-404e-8633-097256c981ca"
+    }
+
+    await axios.post("shielded-escarpment-27661.herokuapp.com/api/v1/user/oauth/authorize",data,headers);
+})()['access_token']
+
+
 
 var api = axios.create({
     baseURL: "shielded-escarpment-27661.herokuapp.com/api/v1/",
