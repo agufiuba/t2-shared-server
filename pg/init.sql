@@ -198,6 +198,16 @@ CREATE TABLE viajes (
 
 ALTER TABLE public.viajes OWNER TO postgres;
 
+
+CREATE TABLE permisos (
+    uid text NOT NULL,
+    permiso numeric NOT NULL
+);
+
+
+ALTER TABLE public.permisos OWNER TO postgres;
+
+
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
@@ -253,6 +263,9 @@ INSERT INTO usuarios_tarjetas VALUES (1, 1);
 
 INSERT INTO viajes VALUES (1, 1, 3, 13, 150, 75, '7/11/2017', 1510076940291);
 INSERT INTO viajes VALUES (2, 2, 4, 10, 200, 100, '7/11/2017', 1510077064409);
+
+INSERT INTO permisos VALUES ('uid', 1);
+INSERT INTO permisos VALUES ('uid', 2);
 
 
 --
