@@ -1,55 +1,41 @@
 var axios = require("axios");
-var request = require('request');
+var request = require('request-promise-native');
 
+var r = request
 
-var token;
-
-var headers = {
-  "Content-Type": "application/json"
-}
-
-
-var options = {
+var optionsToken = {
     url: 'http://shielded-escarpment-27661.herokuapp.com/api/v1/user/oauth/authorize',
     method: 'POST',
-    headers: headers,
-    body: JSON.stringify({client_id:'ce69d9a7-226a-4b43-ae8b-50f6609c6738', client_secret: '59a8011a-47a6-404e-8633-097256c981ca'})
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ client_id: 'ce69d9a7-226a-4b43-ae8b-50f6609c6738', client_secret: '59a8011a-47a6-404e-8633-097256c981ca' })
 }
 
-request(options, function (error, response, body) {
-    if (!error && response.statusCode == 201) {
-        // Print out the response body
-        console.log(body)
-        token = body['access_token']
-        console.log('Se obtuvo el token');
+var token = r(optionsToken).then(t => { return JSON.parse(t).access_token });
+
+var optionsApi = (endpoint, token) => {
+    return {
+        url: "http://shielded-escarpment-27661.herokuapp.com/api/v1/" + endpoint,
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        }
     }
-    console.log('statusCode:'+response.statusCode);
-    console.log('body:'+body);
-})
-
-
-
-var api = axios.create({
-    baseURL: "http://shielded-escarpment-27661.herokuapp.com/api/v1/",
-    headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer "+token
-    }
-})
-
-
+}
 
 module.exports = {
-    getPaymethods: async () => {
-        const res = await api.get("paymethods")
-        return res;
+    getPaymethods: () => {
+        return token.then(async (t) => {
+            return JSON.parse(await r.get(optionsApi("paymethods", t)));
+        })
     },
-    getPayments: async () => {
-        const res = await api.get("payments")
-        return res;
+    getPayments: () => {
+        return token.then(async (t) => {
+            return JSON.parse(await r.get(optionsApi("payments", t)));
+        })
     },
-    postPayment: async (p) => {
-        const res = await api.post("payments", p);
-        return res.data;
-    }
+    postPayment: (p) => {
+        return token.then(async (t) => {
+            return JSON.parse(await r.post(optionsApi("paymethods", t).form(p)));
+        })
+    },
 }

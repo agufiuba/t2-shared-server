@@ -165,8 +165,7 @@ router.get("/costos/:p/:d", async function(req, res) {
 });
 
 router.get("/paymethod", async function(req, res) {
-  const metodos = await pagos.getPaymethods();
-  res.send(metodos);
+  res.send(pms);
 });
 
 app.use(cors());
