@@ -12,12 +12,14 @@ router.get("/hw", function(req, res) {
 });
 
 router.get("/login", function(req, res) {
+  console.log('GET /login');
   token = tokens.add();
   res.set("Authorization", token.token);
   res.send({ id: token.id });
 });
 
 router.get("/logged", function(req, res) {
+  console.log('GET /logged');
   tokens.getAll();
   res.send();
 });
@@ -34,6 +36,7 @@ router.get("/logged/:id", function(req, res) {
 });
 
 router.post("/users", async function(req, res) {
+  console.log('POST /users');
   var usuario = {
     name: req.query.name,
     last_name: req.query.last_name,
@@ -41,17 +44,21 @@ router.post("/users", async function(req, res) {
     type: req.query.type
   };
 
-  await pg.createUser(usuario);
+  pg_response = await pg.createUser(usuario);
+  console.log('pg response: '+pg_response);
   res.status(201);
+  console.log('send a 201');
   res.send();
 });
 
 router.get("/users", async function(req, res) {
+  console.log('GET /users');
   const { rows } = await pg.getUsers();
   res.send(rows);
 });
 
 router.get("/users/:id", async function(req, res) {
+  console.log('GET /users/:id');
   const { rows } = await pg.getUser(req.params.id);
   if (rows.length == 0) {
     res.status(404);
@@ -62,6 +69,7 @@ router.get("/users/:id", async function(req, res) {
 });
 
 router.put("/users/:id", async function(req, res) {
+  console.log('/users/:id');
   const { rows } = await pg.getUser(req.params.id);
   if (rows.length == 0) {
     res.status(404);
@@ -154,8 +162,11 @@ router.get("/trips/:id", async function(req, res) {
 });
 
 router.get("/costos/:p/:d", async function(req, res) {
+  console.log('GET /costos/:p/:d');
   const pasajero = await pg.getUser(req.params.p);
   if (pasajero.rows.length == 0) {
+    console.log('user '+pasajero+' dont found');
+    console.log('send 404');
     res.status(404);
     res.send();
   } else {
