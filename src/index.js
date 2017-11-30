@@ -193,6 +193,17 @@ router.get("/permisos/:uid", async function(req, res) {
   }
 });
 
+router.get("/cars/:mail", async function(req, res) {
+  const data = await pg.getIdFromEmail(req.params.mail)
+  if (data.rows.length == 0) {
+    res.status(404);
+    res.send();
+  }
+  const carid = await pg.getCarId(data.rows[0].id);
+  const { rows } = await pg.getCar(carid.rows[0].auto);
+  res.send(rows);
+});
+
 app.use(cors());
 app.use(router);
 app.listen(process.env.PORT, function() {});

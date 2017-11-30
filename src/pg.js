@@ -120,5 +120,11 @@ module.exports = {
   },
   canCreate: uid => {
     return pool.query("SELECT permiso FROM permisos WHERE uid=$1", [uid]);
+  },
+  getCarId: id => {
+    return pool.query("SELECT auto FROM usuarios_autos WHERE usuario=$1", [id]);
+  },
+  getCar: id => {
+    return pool.query("SELECT * FROM autos WHERE id=$1", [id]);
   }
 };
