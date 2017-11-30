@@ -179,6 +179,20 @@ router.get("/paymethod", async function(req, res) {
   res.send(await pagos.getPaymethods());
 });
 
+router.get("/payments", async function(req, res) {
+  res.send(await pagos.getPayments());
+});
+
+router.get("/permisos/:uid", async function(req, res) {
+  const { rows } = await pg.canCreate(req.params.uid);
+  if (rows.length == 0) {
+    res.status(404);
+    res.send();
+  } else {
+    res.send(rows);
+  }
+});
+
 app.use(cors());
 app.use(router);
 app.listen(process.env.PORT, function() {});

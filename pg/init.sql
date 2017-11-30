@@ -264,9 +264,10 @@ INSERT INTO usuarios_tarjetas VALUES (1, 1);
 INSERT INTO viajes VALUES (1, 1, 3, 13, 150, 75, '7/11/2017', 1510076940291);
 INSERT INTO viajes VALUES (2, 2, 4, 10, 200, 100, '7/11/2017', 1510077064409);
 
-INSERT INTO permisos VALUES ('uid', 1);
-INSERT INTO permisos VALUES ('uid', 2);
-
+INSERT INTO permisos VALUES ('hzyz0ybCTzdCXHYy4hMRj4RRDIH2', 1);
+INSERT INTO permisos VALUES ('hzyz0ybCTzdCXHYy4hMRj4RRDIH2', 2);
+INSERT INTO permisos VALUES ('hzyz0ybCTzdCXHYy4hMRj4RRDIH2', 3);
+INSERT INTO permisos VALUES ('TLFotts3y3SZ3CkyoLzzwf7abgG2', 1);
 
 --
 -- Name: autos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
