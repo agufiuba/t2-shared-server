@@ -249,14 +249,7 @@ INSERT INTO permisos VALUES ('hzyz0ybCTzdCXHYy4hMRj4RRDIH2', 3);
 INSERT INTO permisos VALUES ('TLFotts3y3SZ3CkyoLzzwf7abgG2', 1);
 
 
-
---
--- Name: modelo; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
---
-
-ALTER TABLE ONLY autos
-    ADD CONSTRAINT modelo UNIQUE (model);
-
+    
 
 --
 -- Name: numero; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
