@@ -44,11 +44,24 @@ router.post("/users", async function(req, res) {
     type: req.query.type
   };
 
+  //Is a driver
+  if (usuario.type == 2){
+    var car = {
+      model : req.query.model,
+      color: req.query.color,
+      patent: req.query.patent,
+      year : req.query.year,
+      state: req.query.state,
+      air_conditioner: req.query.air_conditioner,
+      music: req.query.music
+    }
+    await pg.insertCar(req.query.mail,car)
+  }
   pg_response = await pg.createUser(usuario);
   console.log('pg response: '+pg_response);
   res.status(201);
   console.log('send a 201');
-  res.send();
+  res.send(pg_response);
 });
 
 router.get("/users", async function(req, res) {
@@ -194,15 +207,22 @@ router.get("/permisos/:uid", async function(req, res) {
 });
 
 router.get("/cars/:mail", async function(req, res) {
-  const data = await pg.getIdFromEmail(req.params.mail)
-  if (data.rows.length == 0) {
-    res.status(404);
-    res.send();
-  }
-  const carid = await pg.getCarId(data.rows[0].id);
-  const { rows } = await pg.getCar(carid.rows[0].auto);
-  res.send(rows);
+  console.log('GET /cars/:mail');
+  const { rows } = await pg.getCarFromUserEmail(req.params.mail);
+  delete rows[0].user_email
+  const car = rows[0]
+  res.send(car);
 });
+
+
+router.get("/cars", async function(req,res){
+  const data = await pg.getCars()
+  res.send({data});
+});
+
+
+
+
 
 app.use(cors());
 app.use(router);

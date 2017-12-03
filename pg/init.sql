@@ -39,22 +39,20 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: autos; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: autos; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE autos (
-    id integer DEFAULT nextval('autos_id_seq'::regclass) NOT NULL,
+    user_email text NOT NULL PRIMARY KEY,
     model text NOT NULL,
     color text NOT NULL,
     patent text NOT NULL,
     year text NOT NULL,
-    state boolean DEFAULT true NOT NULL,
-    air_conditioner boolean DEFAULT false NOT NULL,
+    state text NOT NULL,
+    air_conditioner TEXT NOT NULL,
     music text
 );
 
-
-ALTER TABLE public.autos OWNER TO postgres;
 
 --
 -- Name: tarjetas_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -78,7 +76,7 @@ SELECT pg_catalog.setval('tarjetas_id_seq', 1, true);
 
 
 --
--- Name: tarjetas; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: tarjetas; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE tarjetas (
@@ -92,7 +90,7 @@ CREATE TABLE tarjetas (
 ALTER TABLE public.tarjetas OWNER TO postgres;
 
 --
--- Name: usuarios; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: usuarios; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE usuarios (
@@ -106,18 +104,6 @@ CREATE TABLE usuarios (
 
 
 ALTER TABLE public.usuarios OWNER TO postgres;
-
---
--- Name: usuarios_autos; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE usuarios_autos (
-    usuario integer NOT NULL,
-    auto integer NOT NULL
-);
-
-
-ALTER TABLE public.usuarios_autos OWNER TO postgres;
 
 --
 -- Name: usuarios_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -148,7 +134,7 @@ SELECT pg_catalog.setval('usuarios_id_seq', 9, true);
 
 
 --
--- Name: usuarios_tarjetas; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: usuarios_tarjetas; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE usuarios_tarjetas (
@@ -181,7 +167,7 @@ SELECT pg_catalog.setval('viajes_id_seq', 2, true);
 
 
 --
--- Name: viajes; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: viajes; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE viajes (
@@ -240,13 +226,6 @@ INSERT INTO usuarios VALUES (4, 'Darius', 'Maitita', 'darius@gmail.com', 2, 1000
 INSERT INTO usuarios VALUES (3, 'Cristian', 'Gonzalez', 'cristian@gmail.com', 2, 375.0);
 
 
---
--- Data for Name: usuarios_autos; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO usuarios_autos VALUES (1, 1);
-INSERT INTO usuarios_autos VALUES (2, 2);
-
 
 --
 -- Data for Name: usuarios_tarjetas; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -269,32 +248,20 @@ INSERT INTO permisos VALUES ('hzyz0ybCTzdCXHYy4hMRj4RRDIH2', 2);
 INSERT INTO permisos VALUES ('hzyz0ybCTzdCXHYy4hMRj4RRDIH2', 3);
 INSERT INTO permisos VALUES ('TLFotts3y3SZ3CkyoLzzwf7abgG2', 1);
 
---
--- Name: autos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
 
-ALTER TABLE ONLY autos
-    ADD CONSTRAINT autos_pkey PRIMARY KEY (id);
-
+    
 
 --
--- Name: modelo; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY autos
-    ADD CONSTRAINT modelo UNIQUE (model);
-
-
---
--- Name: numero; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: numero; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY tarjetas
     ADD CONSTRAINT numero UNIQUE (number);
 
 
+
 --
--- Name: pk; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: pk; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY usuarios_tarjetas
@@ -302,7 +269,7 @@ ALTER TABLE ONLY usuarios_tarjetas
 
 
 --
--- Name: tarjetas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: tarjetas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY tarjetas
@@ -310,15 +277,7 @@ ALTER TABLE ONLY tarjetas
 
 
 --
--- Name: usuario_auto_pk; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY usuarios_autos
-    ADD CONSTRAINT usuario_auto_pk PRIMARY KEY (usuario, auto);
-
-
---
--- Name: usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY usuarios
@@ -326,19 +285,13 @@ ALTER TABLE ONLY usuarios
 
 
 --
--- Name: viajes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: viajes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY viajes
     ADD CONSTRAINT viajes_pkey PRIMARY KEY (id);
 
 
---
--- Name: auto_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY usuarios_autos
-    ADD CONSTRAINT auto_fk FOREIGN KEY (auto) REFERENCES autos(id) ON DELETE CASCADE;
 
 
 --
@@ -349,12 +302,6 @@ ALTER TABLE ONLY usuarios_tarjetas
     ADD CONSTRAINT tarjeta_fk FOREIGN KEY (tarjeta) REFERENCES tarjetas(id) ON DELETE CASCADE;
 
 
---
--- Name: usuario_a_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY usuarios_autos
-    ADD CONSTRAINT usuario_a_fk FOREIGN KEY (usuario) REFERENCES usuarios(id) ON DELETE CASCADE;
 
 
 --
