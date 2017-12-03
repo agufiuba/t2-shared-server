@@ -55,8 +55,8 @@ router.post("/users", async function(req, res) {
       air_conditioner: req.query.air_conditioner,
       music: req.query.music
     }
+    await pg.insertCar(req.query.mail,car)
   }
-  await pg.insertCar(req.query.mail,car)
   pg_response = await pg.createUser(usuario);
   console.log('pg response: '+pg_response);
   res.status(201);
