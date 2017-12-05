@@ -193,6 +193,12 @@ CREATE TABLE permisos (
 
 ALTER TABLE public.permisos OWNER TO postgres;
 
+CREATE TABLE costos (
+    descripcion text NOT NULL,
+    valor numeric NOT NULL
+);
+
+ALTER TABLE public.costos OWNER TO postgres;
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
@@ -248,8 +254,11 @@ INSERT INTO permisos VALUES ('hzyz0ybCTzdCXHYy4hMRj4RRDIH2', 2);
 INSERT INTO permisos VALUES ('hzyz0ybCTzdCXHYy4hMRj4RRDIH2', 3);
 INSERT INTO permisos VALUES ('TLFotts3y3SZ3CkyoLzzwf7abgG2', 1);
 
-
-    
+INSERT INTO costos VALUES ('pMinimo', 50);
+INSERT INTO costos VALUES ('pPPK', 15);
+INSERT INTO costos VALUES ('cMinimo', 30);
+INSERT INTO costos VALUES ('cPPK', 5);
+INSERT INTO costos VALUES ('primerViaje', 100);
 
 --
 -- Name: numero; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:

@@ -2,23 +2,28 @@ var date = new Date();
 
 var pg = require("./pg");
 
-var pMinimo = 50;
-var pPPK = 15;
-var cMinimo = 30;
-var cPPK = 5;
+var getCostos = async () => {
+  var costos = {};
+  const { rows } = await pg.getCostos();
+  rows.forEach((r) => {
+    costos[r.descripcion] = parseFloat(r.valor);
+  });
+  console.log(costos);
+  return costos;
+}
 
-// TODO: llamadas
 module.exports = {
   pasajero: async (id, kms) => {
+    var costos = await getCostos();
     console.log('pasajero: async (id, kms)');
     var precio = 0;
     const saldo = await pg.getSaldo(id);
-    console.log('saldo: '+saldo);
+    console.log('saldo: ' + saldo);
     const correo = id;
     if (!correo.endsWith("@llevame.com")) {
-      console.log('the email dont end with @llevame.com');
+      console.log('the email doesnt end with @llevame.com');
       if (saldo.rows[0].saldo >= 0) {
-        precio = pMinimo + kms * pPPK;
+        precio = costos.pMinimo + kms * costos.pPPK;
         var off = 0;
         var recargo = 0;
         // Miercoles
@@ -44,7 +49,7 @@ module.exports = {
         id_from_db = promise_from_id.rows[0].id
         const cantViajes = await pg.getCantViajesP(id_from_db);
         if (cantViajes.rows[0].count == 0) {
-          precio -= 100;
+          precio -= costos.primerViaje;
         }
         // Mas de 10 viajes en 30 min
         const cantViajesHH = await pg.getCantViajesHHP(id_from_db);
@@ -63,11 +68,12 @@ module.exports = {
         return -1;
       }
     }
-    console.log('precio:'+ precio);
+    console.log('precio:' + precio);
     return precio;
   },
   conductor: async (id, kms) => {
-    var precio = cMinimo + kms * cPPK;
+    var costos = await getCostos();   
+    var precio = costos.cMinimo + kms * costos.cPPK;
     var recargo = 0;
     // Lunes a Viernes
     var day = date.getDay();

@@ -122,18 +122,21 @@ module.exports = {
     return pool.query("SELECT permiso FROM permisos WHERE uid=$1", [uid]);
   },
   getCarFromUserEmail: email => {
-    console.log('getCarFromUserEmail the email is:'+email);
+    console.log('getCarFromUserEmail the email is:' + email);
     return pool.query("SELECT * FROM autos WHERE user_email=$1", [email]);
   },
   getCars: () => {
     console.log('Get cars');
     return pool.query("SELECT * FROM autos")
   },
-  insertCar:(email,car) =>{
-    console.log('Insert car for user email: '+email);
+  insertCar: (email, car) => {
+    console.log('Insert car for user email: ' + email);
     return pool.query(
       "INSERT INTO autos(user_email,model, color, patent,year,state,air_conditioner,music) VALUES($1, $2, $3, $4,$5,$6,$7,$8);",
-      [email, car.model, car.color,car.patent,car.year,car.state,car.air_conditioner,car.music]
+      [email, car.model, car.color, car.patent, car.year, car.state, car.air_conditioner, car.music]
     );
+  },
+  getCostos: () => {
+    return pool.query("SELECT * FROM costos;");
   }
 };

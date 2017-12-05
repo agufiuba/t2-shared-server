@@ -211,10 +211,10 @@ router.get("/trips/:id", async function(req, res) {
 });
 
 router.get("/costos/:p/:d", async function(req, res) {
-  if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
-    res.status(401);
-    res.send();
-  } else {
+  // if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
+  //   res.status(401);
+  //   res.send();
+  // } else {
     console.log('GET /costos/:p/:d');
     const pasajero = await pg.getUser(req.params.p);
     if (pasajero.rows.length == 0) {
@@ -226,7 +226,7 @@ router.get("/costos/:p/:d", async function(req, res) {
       const costoP = await costos.pasajero(req.params.p, req.params.d);
       res.send({costo: costoP});
     }
-  }
+  // }
 });
 
 router.get("/paymethod", async function(req, res) {
