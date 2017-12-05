@@ -144,5 +144,8 @@ module.exports = {
   },
   updateRule: (rule) => {
     return pool.query("UPDATE costos SET valor=$2 WHERE descripcion=$1;", [rule.descripcion, rule.valor]);
-  }  
+  },
+  getTarjetas: (mail) => {
+    return pool.query("SELECT * FROM tarjetas t JOIN usuarios_tarjetas ut ON t.id=ut.tarjeta WHERE ut.usuario=$1", [mail]);
+  }
 };

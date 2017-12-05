@@ -138,7 +138,7 @@ SELECT pg_catalog.setval('usuarios_id_seq', 9, true);
 --
 
 CREATE TABLE usuarios_tarjetas (
-    usuario integer NOT NULL,
+    usuario text NOT NULL,
     tarjeta integer NOT NULL
 );
 
@@ -237,9 +237,8 @@ INSERT INTO usuarios VALUES (3, 'Cristian', 'Gonzalez', 'cristian@gmail.com', 2,
 -- Data for Name: usuarios_tarjetas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO usuarios_tarjetas VALUES (3, 1);
-INSERT INTO usuarios_tarjetas VALUES (2, 1);
-INSERT INTO usuarios_tarjetas VALUES (1, 1);
+INSERT INTO usuarios_tarjetas VALUES ('tomas@gmail.com', 1);
+INSERT INTO usuarios_tarjetas VALUES ('agu@gmail.com', 1);
 
 
 --
@@ -292,6 +291,9 @@ ALTER TABLE ONLY tarjetas
 ALTER TABLE ONLY usuarios
     ADD CONSTRAINT usuarios_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY usuarios
+    ADD CONSTRAINT usuarios_mail UNIQUE (mail);
+
 
 --
 -- Name: viajes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
@@ -318,7 +320,7 @@ ALTER TABLE ONLY usuarios_tarjetas
 --
 
 ALTER TABLE ONLY usuarios_tarjetas
-    ADD CONSTRAINT usuario_fk FOREIGN KEY (usuario) REFERENCES usuarios(id) ON DELETE CASCADE;
+    ADD CONSTRAINT usuario_fk FOREIGN KEY (usuario) REFERENCES usuarios(mail) ON DELETE CASCADE;
 
 
 --
