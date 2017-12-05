@@ -138,5 +138,11 @@ module.exports = {
   },
   getCostos: () => {
     return pool.query("SELECT * FROM costos;");
-  }
+  },
+  getCosto: (descripcion) => {
+    return pool.query("SELECT * FROM costos WHERE descripcion=$1;", [descripcion]);
+  },
+  updateRule: (rule) => {
+    return pool.query("UPDATE costos SET valor=$2 WHERE descripcion=$1;", [rule.descripcion, rule.valor]);
+  }  
 };

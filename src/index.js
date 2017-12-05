@@ -285,6 +285,23 @@ router.get("/cars", async function(req,res){
   res.send({data});
 });
 
+router.put("/rules", async function(req, res) {
+  console.log('/rules');
+  var rule = {
+    descripcion: req.query.descripcion,
+    valor: req.query.valor
+  };
+  console.log(rule)
+  const { rows } = await pg.getCosto(rule.descripcion);
+  if (rows.length == 0) {
+    res.status(300);
+    res.send();
+  } else {
+    await pg.updateRule(rule);
+    res.send();
+  }
+});
+
 app.use(cors());
 app.use(router);
 app.listen(process.env.PORT, function() {});
