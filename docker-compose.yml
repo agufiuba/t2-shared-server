@@ -4,7 +4,7 @@ services:
     build:
       context: pg
     ports:
-      - "5432:5432"
+      - "$POSTGRES_PORT:5432"
 
   shared-server:
     build:
