@@ -14,8 +14,11 @@ module.exports = {
   remove: (id) => {
     delete tokens[id];
   },
-  exists: (id) => {
-    return id in tokens;
+  exists: (t) => {
+    for (k in tokens) {
+      if (tokens[k] == t) return true;
+    }
+    return false;
   },
   getAll: () => {
     return Object.keys(tokens);

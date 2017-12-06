@@ -71,6 +71,8 @@ router.post("/users", async function(req, res) {
 });
 
 router.get("/users", async function(req, res) {
+  console.log(req.headers.authorization)
+  console.log(tokens.exists(req.headers.authorization))
   if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
     res.status(401);
     res.send();
