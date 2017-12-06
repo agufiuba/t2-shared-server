@@ -120,5 +120,32 @@ module.exports = {
   },
   canCreate: uid => {
     return pool.query("SELECT permiso FROM permisos WHERE uid=$1", [uid]);
+  },
+  getCarFromUserEmail: email => {
+    console.log('getCarFromUserEmail the email is:' + email);
+    return pool.query("SELECT * FROM autos WHERE user_email=$1", [email]);
+  },
+  getCars: () => {
+    console.log('Get cars');
+    return pool.query("SELECT * FROM autos")
+  },
+  insertCar: (email, car) => {
+    console.log('Insert car for user email: ' + email);
+    return pool.query(
+      "INSERT INTO autos(user_email,model, color, patent,year,state,air_conditioner,music) VALUES($1, $2, $3, $4,$5,$6,$7,$8);",
+      [email, car.model, car.color, car.patent, car.year, car.state, car.air_conditioner, car.music]
+    );
+  },
+  getCostos: () => {
+    return pool.query("SELECT * FROM costos;");
+  },
+  getCosto: (descripcion) => {
+    return pool.query("SELECT * FROM costos WHERE descripcion=$1;", [descripcion]);
+  },
+  updateRule: (rule) => {
+    return pool.query("UPDATE costos SET valor=$2 WHERE descripcion=$1;", [rule.descripcion, rule.valor]);
+  },
+  getTarjetas: (mail) => {
+    return pool.query("SELECT * FROM tarjetas t JOIN usuarios_tarjetas ut ON t.id=ut.tarjeta WHERE ut.usuario=$1", [mail]);
   }
 };
