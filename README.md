@@ -24,3 +24,30 @@ Por ejemplo, si se ejecuta `export PORT=3000` luego se accederá a la API a trav
 Finalmente, para levantar el servidor:
 
 -   `docker-compose up`
+
+
+## Servicios
+
+### Login
+
+`GET /login : { id: token.id }` Inicia sesion de un app-server.
+
+`DELETE /logged/:id : { id: token.id }` Cierra sesion de un app-server.
+
+### Usuarios
+
+`GET /users/:id` Devuelve informacion del usuario.
+
+`GET /cars/:usuario` Devuelve la informacion del auto perteneciente al usuario.
+
+### Viajes
+
+`POST /trips/:pasajero/:chofer/:distancia` Crea un viaje. Realiza el pago correspondiente.
+
+`GET /trips/:id` Devuelve informacion del viaje.
+
+`GET /costos/:pasajero/:distancia` Estima el costo de un viaje.
+
+### Pagos
+
+`GET /paymethod` Devuelve los metodos de pago disponibles.
