@@ -230,7 +230,7 @@ INSERT INTO tarjetas VALUES (1, 'DATC', '1594987623245126', 1, 11, 19, 132);
 --
 
 INSERT INTO usuarios VALUES (2, 'Tomas', 'Arjovsky', 'tomas@gmail.com', 1, 500.0);
-INSERT INTO usuarios VALUES (1, 'Agustin', 'Gaillard', 'agu@gmail.com', 1, 250.0);
+INSERT INTO usuarios VALUES (1, 'Agustin', 'Gaillard', 'agu@gmail.com', 1, 25000.0);
 INSERT INTO usuarios VALUES (4, 'Darius', 'Maitita', 'darius@gmail.com', 2, 1000.0);
 INSERT INTO usuarios VALUES (3, 'Cristian', 'Gonzalez', 'cristian@gmail.com', 2, 375.0);
 

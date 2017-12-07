@@ -5,23 +5,22 @@ var pg = require("./pg");
 var getCostos = async () => {
   var costos = {};
   const { rows } = await pg.getCostos();
-  rows.forEach((r) => {
+  rows.forEach(r => {
     costos[r.descripcion] = parseFloat(r.valor);
   });
-  console.log(costos);
   return costos;
-}
+};
 
 module.exports = {
   pasajero: async (id, kms) => {
     var costos = await getCostos();
-    console.log('pasajero: async (id, kms)');
+    console.log("pasajero: async (id, kms)");
     var precio = 0;
     const saldo = await pg.getSaldo(id);
-    console.log('saldo: ' + saldo);
+    console.log("saldo: " + saldo);
     const correo = id;
     if (!correo.endsWith("@llevame.com")) {
-      console.log('the email doesnt end with @llevame.com');
+      console.log("the email doesnt end with @llevame.com");
       if (saldo.rows[0].saldo >= 0) {
         precio = costos.pMinimo + kms * costos.pPPK;
         var off = 0;
@@ -45,11 +44,11 @@ module.exports = {
           }
         }
         // Primer viaje
-        promise_from_id = await pg.getIdFromEmail(id)
-        id_from_db = promise_from_id.rows[0].id
+        promise_from_id = await pg.getIdFromEmail(id);
+        id_from_db = promise_from_id.rows[0].id;
         const cantViajes = await pg.getCantViajesP(id_from_db);
         if (cantViajes.rows[0].count == 0) {
-          console.log('cantViajes.rows[0].count = 0');
+          console.log("cantViajes.rows[0].count = 0");
           precio -= costos.primerViaje;
         }
         // Mas de 10 viajes en 30 min
@@ -69,7 +68,7 @@ module.exports = {
         return -1;
       }
     }
-    console.log('precio:' + precio);
+    console.log("precio:" + precio);
     return precio;
   },
   conductor: async (id, kms) => {
@@ -86,7 +85,9 @@ module.exports = {
       }
     }
     // Mas de 10 viajes en el dia
-    const cantViajesDia = await pg.getCantViajesDiaC(pg.getIdFromEmail(id));
+    var pguid = await pg.getIdFromEmail(id);
+    var uid = pguid.rows[0].id;
+    const cantViajesDia = await pg.getCantViajesDiaC(uid);
     if (cantViajesDia.rows[0].count >= 10) {
       recargo += 0.02;
     }

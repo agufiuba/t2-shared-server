@@ -149,27 +149,58 @@ router.post("/trips/:p/:c/:d", async function(req, res) {
     if (!found) {
       res.send(err);
     } else {
-      // await pg.createTrip(req.params.p, req.params.c, req.params.d);
       const saldoP = await pg.getSaldo(req.params.p);
       const costoP = await costos.pasajero(req.params.p, req.params.d);
-      if (saldoP.rows[0].saldo < 0 || costoP > saldoP.rows[0].saldo) {
+      if (
+        req.query.metodo == "cash" &&
+        (saldoP.rows[0].saldo < 0 || costoP > saldoP.rows[0].saldo)
+      ) {
         res.status(409);
         res.send();
       } else {
+        var p = {
+          value: parseFloat(costoP),
+          currency: "ARS",
+          paymentMethod: {
+            method: req.query.metodo
+          }
+        };
         const saldoC = await pg.getSaldo(req.params.c);
         const costoC = await costos.conductor(req.params.c, req.params.d);
-        await pg.updateSaldo(
-          req.params.p,
-          parseFloat(saldoP.rows[0].saldo) - parseFloat(costoP)
-        );
         await pg.updateSaldo(
           req.params.c,
           parseFloat(saldoC.rows[0].saldo) + parseFloat(costoC)
         );
+        if (req.query.metodo == "card") {
+          console.log("metodo card");
+          const { rows } = await pg.getTarjetas(req.params.p);
+          var t = rows[0];
+          p.paymentMethod.method = "card";
+          p.paymentMethod.number = t.number;
+          if (t.typeCard == 1) {
+            p.paymentMethod.type = "VISA";
+          } else {
+            p.paymentMethod.type = "MASTERCARD";
+          }
+          p.paymentMethod.expiration_month = t.expm;
+          p.paymentMethod.expiration_year = t.expy;
+          p.paymentMethod.ccvv = t.ccvv;
+        } else {
+          console.log("metodo cash");
+          await pg.updateSaldo(
+            req.params.p,
+            parseFloat(saldoP.rows[0].saldo) - parseFloat(costoP)
+          );
+          p.paymentMethod.method = "cash";
+        }
         var date = new Date();
+        var pgpuid = await pg.getIdFromEmail(req.params.p);
+        var puid = pgpuid.rows[0].id;
+        var pgcuid = await pg.getIdFromEmail(req.params.c);
+        var cuid = pgcuid.rows[0].id;
         var trip = {
-          p: req.params.p,
-          c: req.params.c,
+          p: puid,
+          c: cuid,
           d: req.params.d,
           costo: costoP,
           ganancia: costoC,
@@ -182,6 +213,8 @@ router.post("/trips/:p/:c/:d", async function(req, res) {
           hora: date.getTime()
         };
         await pg.createTrip(trip);
+        console.log(p);
+        await pagos.postPayment(p);
         res.status(201);
         res.send();
       }
@@ -291,51 +324,6 @@ router.get("/rules", async function(req, res) {
   console.log("GET /rules");
   const { rows } = await pg.getRules();
   res.send(rows);
-});
-
-router.post("/payment", async function(req, res) {
-  console.log("POST /payment");
-  var p = {
-    value: req.query.valor,
-    currency: "ARS",
-    paymentMethod: {
-      method: req.query.metodo
-    }
-  };
-  if (req.query.metodo == "card") {
-    const { rows } = await pg.getTarjetas(req.query.mail);
-    var t = rows[0];
-    p.paymentMethod.method = "card";
-    p.paymentMethod.number = t.number;
-    if (t.typeCard == 1) {
-      p.paymentMethod.type = "VISA";
-    } else {
-      p.paymentMethod.type = "MASTERCARD";
-    }
-    p.paymentMethod.expiration_month = t.expm;
-    p.paymentMethod.expiration_year = t.expy;
-    p.paymentMethod.ccvv = t.ccvv;
-    await pagos.postPayment(p);
-    res.send();
-  } else {
-    const pgusers = await pg.getUser(req.query.mail);
-    const user = pgusers.rows[0];
-    if (parseFloat(user.saldo) < req.query.valor) {
-      res.status(400);
-      res.send();
-    } else {
-      p.paymentMethod.method = "cash";
-      await pg.updateSaldo(req.query.mail, user.saldo - req.query.valor);
-      const pgchofer = await pg.getUser(req.query.mailchofer);
-      const chofer = pgchofer.rows[0];
-      await pg.updateSaldo(
-        req.query.mailchofer,
-        chofer.saldo + req.query.valor
-      );
-      await pagos.postPayment(p);
-      res.send();
-    }
-  }
 });
 
 app.use(cors());
