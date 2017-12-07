@@ -147,5 +147,8 @@ module.exports = {
   },
   getTarjetas: (mail) => {
     return pool.query("SELECT * FROM tarjetas t JOIN usuarios_tarjetas ut ON t.id=ut.tarjeta WHERE ut.usuario=$1", [mail]);
+  },
+  getRules: () => {
+    return pool.query("SELECT * FROM costos");
   }
 };

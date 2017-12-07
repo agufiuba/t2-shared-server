@@ -13,20 +13,20 @@ router.get("/hw", function(req, res) {
 });
 
 router.get("/login", function(req, res) {
-  console.log('GET /login');
+  console.log("GET /login");
   token = tokens.add();
   res.set("Authorization", token.token);
   res.send({ id: token.id });
 });
 
 router.get("/logged", function(req, res) {
-  console.log('GET /logged');
+  console.log("GET /logged");
   var logged = tokens.getAll();
   res.send(logged);
 });
 
 router.delete("/logged/:id", function(req, res) {
-  if (tokens.exists(req.params["id"])) tokens.remove(req.params["id"]);
+  if (tokens.existsId(req.params["id"])) tokens.remove(req.params["id"]);
   else res.status(404);
   res.send();
 });
@@ -37,50 +37,38 @@ router.get("/logged/:id", function(req, res) {
 });
 
 router.post("/users", async function(req, res) {
-  if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
-    res.status(401);
-    res.send();
-  } else {
-    console.log('POST /users');
-    var usuario = {
-      name: req.query.name,
-      last_name: req.query.last_name,
-      mail: req.query.mail,
-      type: req.query.type
+  console.log("POST /users");
+  var usuario = {
+    name: req.query.name,
+    last_name: req.query.last_name,
+    mail: req.query.mail,
+    type: req.query.type
+  };
+
+  //Is a driver
+  if (usuario.type == 2) {
+    var car = {
+      model: req.query.model,
+      color: req.query.color,
+      patent: req.query.patent,
+      year: req.query.year,
+      state: req.query.state,
+      air_conditioner: req.query.air_conditioner,
+      music: req.query.music
     };
-  
-    //Is a driver
-    if (usuario.type == 2){
-      var car = {
-        model : req.query.model,
-        color: req.query.color,
-        patent: req.query.patent,
-        year : req.query.year,
-        state: req.query.state,
-        air_conditioner: req.query.air_conditioner,
-        music: req.query.music
-      }
-      await pg.insertCar(req.query.mail,car)
-    }
-    pg_response = await pg.createUser(usuario);
-    console.log('pg response: '+pg_response);
-    res.status(201);
-    console.log('send a 201');
-    res.send(pg_response);
+    await pg.insertCar(req.query.mail, car);
   }
+  pg_response = await pg.createUser(usuario);
+  console.log("pg response: " + pg_response);
+  res.status(201);
+  console.log("send a 201");
+  res.send(pg_response);
 });
 
 router.get("/users", async function(req, res) {
-  console.log(req.headers.authorization)
-  console.log(tokens.exists(req.headers.authorization))
-  if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
-    res.status(401);
-    res.send();
-  } else {
-    console.log('GET /users');
-    const { rows } = await pg.getUsers();
-    res.send(rows);
-  }
+  console.log("GET /users");
+  const { rows } = await pg.getUsers();
+  res.send(rows);
 });
 
 router.get("/users/:id", async function(req, res) {
@@ -88,7 +76,7 @@ router.get("/users/:id", async function(req, res) {
     res.status(401);
     res.send();
   } else {
-    console.log('GET /users/:id');
+    console.log("GET /users/:id");
     const { rows } = await pg.getUser(req.params.id);
     if (rows.length == 0) {
       res.status(404);
@@ -104,7 +92,7 @@ router.put("/users/:id", async function(req, res) {
     res.status(401);
     res.send();
   } else {
-    console.log('/users/:id');
+    console.log("/users/:id");
     const { rows } = await pg.getUser(req.params.id);
     if (rows.length == 0) {
       res.status(404);
@@ -185,7 +173,12 @@ router.post("/trips/:p/:c/:d", async function(req, res) {
           d: req.params.d,
           costo: costoP,
           ganancia: costoC,
-          dia: date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear(),
+          dia:
+            date.getUTCDate() +
+            "/" +
+            (date.getUTCMonth() + 1) +
+            "/" +
+            date.getUTCFullYear(),
           hora: date.getTime()
         };
         await pg.createTrip(trip);
@@ -217,17 +210,17 @@ router.get("/costos/:p/:d", async function(req, res) {
   //   res.status(401);
   //   res.send();
   // } else {
-    console.log('GET /costos/:p/:d');
-    const pasajero = await pg.getUser(req.params.p);
-    if (pasajero.rows.length == 0) {
-      console.log('user '+pasajero+' dont found');
-      console.log('send 404');
-      res.status(404);
-      res.send();
-    } else {
-      const costoP = await costos.pasajero(req.params.p, req.params.d);
-      res.send({costo: costoP});
-    }
+  console.log("GET /costos/:p/:d");
+  const pasajero = await pg.getUser(req.params.p);
+  if (pasajero.rows.length == 0) {
+    console.log("user " + pasajero + " dont found");
+    console.log("send 404");
+    res.status(404);
+    res.send();
+  } else {
+    const costoP = await costos.pasajero(req.params.p, req.params.d);
+    res.send({ costo: costoP });
+  }
   // }
 });
 
@@ -241,26 +234,16 @@ router.get("/paymethod", async function(req, res) {
 });
 
 router.get("/payments", async function(req, res) {
-  if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
-    res.status(401);
-    res.send();
-  } else {
-    res.send(await pagos.getPayments());
-  }
+  res.send(await pagos.getPayments());
 });
 
 router.get("/permisos/:uid", async function(req, res) {
-  if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
-    res.status(401);
+  const { rows } = await pg.canCreate(req.params.uid);
+  if (rows.length == 0) {
+    res.status(404);
     res.send();
   } else {
-    const { rows } = await pg.canCreate(req.params.uid);
-    if (rows.length == 0) {
-      res.status(404);
-      res.send();
-    } else {
-      res.send(rows);
-    }
+    res.send(rows);
   }
 });
 
@@ -269,31 +252,31 @@ router.get("/cars/:mail", async function(req, res) {
     res.status(401);
     res.send();
   } else {
-    console.log('GET /cars/:mail');
+    console.log("GET /cars/:mail");
     const { rows } = await pg.getCarFromUserEmail(req.params.mail);
     if (rows.length == 0) {
       res.status(404);
       res.send();
     } else {
-      delete rows[0].user_email
-      const car = rows[0]
+      delete rows[0].user_email;
+      const car = rows[0];
       res.send(car);
     }
   }
 });
 
-router.get("/cars", async function(req,res){
-  const data = await pg.getCars()
-  res.send({data});
+router.get("/cars", async function(req, res) {
+  const data = await pg.getCars();
+  res.send({ data });
 });
 
 router.put("/rules", async function(req, res) {
-  console.log('/rules');
+  console.log("/rules");
   var rule = {
     descripcion: req.query.descripcion,
     valor: req.query.valor
   };
-  console.log(rule)
+  console.log(rule);
   const { rows } = await pg.getCosto(rule.descripcion);
   if (rows.length == 0) {
     res.status(300);
@@ -302,6 +285,12 @@ router.put("/rules", async function(req, res) {
     await pg.updateRule(rule);
     res.send();
   }
+});
+
+router.get("/rules", async function(req, res) {
+  console.log("GET /rules");
+  const { rows } = await pg.getRules();
+  res.send(rows);
 });
 
 app.use(cors());
