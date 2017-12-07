@@ -49,6 +49,7 @@ module.exports = {
         id_from_db = promise_from_id.rows[0].id
         const cantViajes = await pg.getCantViajesP(id_from_db);
         if (cantViajes.rows[0].count == 0) {
+          console.log('cantViajes.rows[0].count = 0');
           precio -= costos.primerViaje;
         }
         // Mas de 10 viajes en 30 min
@@ -72,7 +73,7 @@ module.exports = {
     return precio;
   },
   conductor: async (id, kms) => {
-    var costos = await getCostos();   
+    var costos = await getCostos();
     var precio = costos.cMinimo + kms * costos.cPPK;
     var recargo = 0;
     // Lunes a Viernes
