@@ -83,7 +83,10 @@ CREATE TABLE tarjetas (
     id integer DEFAULT nextval('tarjetas_id_seq'::regclass) NOT NULL,
     "nameOnCard" text NOT NULL,
     number text NOT NULL,
-    "typeCard" integer NOT NULL
+    "typeCard" integer NOT NULL,
+    expm numeric NOT NULL,
+    expy numeric NOT NULL,
+    ccvv numeric NOT NULL
 );
 
 
@@ -219,7 +222,7 @@ INSERT INTO autos VALUES (2, '208', 'Blanco', 'AB001ES', '2016', true, false, 'q
 -- Data for Name: tarjetas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO tarjetas VALUES (1, 'DATC', '1594987623245126', 1);
+INSERT INTO tarjetas VALUES (1, 'DATC', '1594987623245126', 1, 11, 19, 132);
 
 
 --

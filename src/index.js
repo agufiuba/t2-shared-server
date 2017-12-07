@@ -206,22 +206,22 @@ router.get("/trips/:id", async function(req, res) {
 });
 
 router.get("/costos/:p/:d", async function(req, res) {
-  // if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
-  //   res.status(401);
-  //   res.send();
-  // } else {
-  console.log("GET /costos/:p/:d");
-  const pasajero = await pg.getUser(req.params.p);
-  if (pasajero.rows.length == 0) {
-    console.log("user " + pasajero + " dont found");
-    console.log("send 404");
-    res.status(404);
+  if (!req.headers.authorization || !tokens.exists(req.headers.authorization)) {
+    res.status(401);
     res.send();
   } else {
-    const costoP = await costos.pasajero(req.params.p, req.params.d);
-    res.send({ costo: costoP });
+    console.log("GET /costos/:p/:d");
+    const pasajero = await pg.getUser(req.params.p);
+    if (pasajero.rows.length == 0) {
+      console.log("user " + pasajero + " dont found");
+      console.log("send 404");
+      res.status(404);
+      res.send();
+    } else {
+      const costoP = await costos.pasajero(req.params.p, req.params.d);
+      res.send({ costo: costoP });
+    }
   }
-  // }
 });
 
 router.get("/paymethod", async function(req, res) {
@@ -291,6 +291,51 @@ router.get("/rules", async function(req, res) {
   console.log("GET /rules");
   const { rows } = await pg.getRules();
   res.send(rows);
+});
+
+router.post("/payment", async function(req, res) {
+  console.log("POST /payment");
+  var p = {
+    value: req.query.valor,
+    currency: "ARS",
+    paymentMethod: {
+      method: req.query.metodo
+    }
+  };
+  if (req.query.metodo == "card") {
+    const { rows } = await pg.getTarjetas(req.query.mail);
+    var t = rows[0];
+    p.paymentMethod.method = "card";
+    p.paymentMethod.number = t.number;
+    if (t.typeCard == 1) {
+      p.paymentMethod.type = "VISA";
+    } else {
+      p.paymentMethod.type = "MASTERCARD";
+    }
+    p.paymentMethod.expiration_month = t.expm;
+    p.paymentMethod.expiration_year = t.expy;
+    p.paymentMethod.ccvv = t.ccvv;
+    await pagos.postPayment(p);
+    res.send();
+  } else {
+    const pgusers = await pg.getUser(req.query.mail);
+    const user = pgusers.rows[0];
+    if (parseFloat(user.saldo) < req.query.valor) {
+      res.status(400);
+      res.send();
+    } else {
+      p.paymentMethod.method = "cash";
+      await pg.updateSaldo(req.query.mail, user.saldo - req.query.valor);
+      const pgchofer = await pg.getUser(req.query.mailchofer);
+      const chofer = pgchofer.rows[0];
+      await pg.updateSaldo(
+        req.query.mailchofer,
+        chofer.saldo + req.query.valor
+      );
+      await pagos.postPayment(p);
+      res.send();
+    }
+  }
 });
 
 app.use(cors());
